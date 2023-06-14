@@ -1,0 +1,28 @@
+---
+- hosts: '{{ targetHosts }}'
+  remote_user: root
+  tasks:
+  - name: copy old ifcfg-eth0 to /tmp 
+    fetch: src=/etc/sysconfig/network-scripts/ifcfg-eth0 dest=/tmp/ifcfg-eth0 mode=644 owner=root group=root  
+  - name: remove old ifcfg-eth0
+    file: path=/etc/sysconfig/network-scripts/ifcfg-eth0  state=absent
+  - name: add new ifcfg-eth0    
+    file: path=/etc/sysconfig/network-scripts/ifcfg-eth0 state=touch mode=644 owner=root group=root
+  - name: ethernet_single_ifcfg_eth0 1/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='BOOTPROTO=' line='BOOTPROTO="none"' state=present
+  - name: ethernet_single_ifcfg_eth0 2/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='TYPE=' line='TYPE=Ethernet' state=present  
+  - name: ethernet_single_ifcfg_eth0 3/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='IPADDR=' line='IPADDR="{{ ansible_eth0.ipv4.address }}"' state=present   
+  - name: ethernet_single_ifcfg_eth0 4/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='NETMASK=' line='NETMASK="{{ ansible_eth0.ipv4.netmask }}"' state=present   
+  - name: ethernet_single_ifcfg_eth0 5/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='GATEWAY=' line='GATEWAY="{{ ansible_default_ipv4.gateway }}"' state=present              
+  - name: ethernet_single_ifcfg_eth0 6/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='DEVICE=' line='DEVICE="eth0"' state=present                
+  - name: ethernet_single_ifcfg_eth0 7/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='HWADDR=' line='HWADDR="{{ ansible_eth0.macaddress }}"' state=present                     
+  - name: ethernet_single_ifcfg_eth0 8/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='ONBOOT=' line='ONBOOT=yes' state=present
+  - name: Restart Network
+    service: name=network state=restarted

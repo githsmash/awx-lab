@@ -1,0 +1,71 @@
+---
+- hosts: '{{ targetHosts }}'
+  remote_user: root
+  tasks:
+  - name: copy old ifcfg-eth0 to /tmp
+    fetch: src=/etc/sysconfig/network-scripts/ifcfg-eth0 dest=/tmp/ifcfg-eth0.old mode=644 owner=root group=root
+  - name: copy old ifcfg-eth1 to /tmp
+    fetch: src=/etc/sysconfig/network-scripts/ifcfg-eth1 dest=/tmp/ifcfg-eth1.old mode=644 owner=root group=root
+  - name: copy old ifcfg-bond0 to /tmp
+    fetch: src=/etc/sysconfig/network-scripts/ifcfg-bond0 dest=/tmp/ifcfg-bond0.old mode=644 owner=root group=root
+  - name: remove old ifcfg-eth0
+    file: path=/etc/sysconfig/network-scripts/ifcfg-eth0  state=absent
+  - name: remove old ifcfg-eth1
+    file: path=/etc/sysconfig/network-scripts/ifcfg-eth1  state=absent
+  - name: remove old ifcfg-bond0
+    file: path=/etc/sysconfig/network-scripts/ifcfg-bond0  state=absent
+  - name: add new ifcfg-eth0
+    file: path=/etc/sysconfig/network-scripts/ifcfg-eth0 state=touch mode=644 owner=root group=root
+  - name: add new ifcfg-eth1
+    file: path=/etc/sysconfig/network-scripts/ifcfg-eth1 state=touch mode=644 owner=root group=root	
+  - name: add new ifcfg-bond0
+    file: path=/etc/sysconfig/network-scripts/ifcfg-bond0 state=touch mode=644 owner=root group=root
+#ifcfg_eth0
+  - name: ethernet_bonding_ifcfg_eth0 1/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='DEVICE=' line='DEVICE=eth0' state=present
+  - name: ethernet_bonding_ifcfg_eth0 2/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='HWADDR=' line='HWADDR={{ ansible_eth0.macaddress }}' state=present
+  - name: ethernet_bonding_ifcfg_eth0 3/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='TYPE=' line='TYPE=Ethernet' state=present
+#  - name: ethernet_bonding_ifcfg_eth0 4/8
+#    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='UUID=' line='UUID={{ ansible_eth0.uuid } 
+  - name: ethernet_bonding_ifcfg_eth0 5/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='ONBOOT=' line='ONBOOT=yes' state=present
+  - name: ethernet_bonding_ifcfg_eth0 6/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='BOOTPROTO=' line='BOOTPROTO=none' state=present
+  - name: ethernet_bonding_ifcfg_eth0 7/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='MASTER=' line='MASTER=bond0' state=present
+  - name: ethernet_bonding_ifcfg_eth0 8/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth0 regexp='SLAVE=' line='SLAVE=yes' state=present
+#ifcfg_eth1
+  - name: ethernet_bonding_ifcfg_eth1 1/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='DEVICE=' line='DEVICE=eth1' state=present
+  - name: ethernet_bonding_ifcfg_eth1 2/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='HWADDR=' line='HWADDR={{ ansible_eth1.macaddress }}' state=present
+  - name: ethernet_bonding_ifcfg_eth1 3/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='TYPE=' line='TYPE=Ethernet' state=present
+#  - name: ethernet_bonding_ifcfg_eth1 4/8
+#    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='UUID=' line='UUID={{ ansible_eth1.uuid } 
+  - name: ethernet_bonding_ifcfg_eth1 5/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='ONBOOT=' line='ONBOOT=yes' state=present
+  - name: ethernet_bonding_ifcfg_eth1 6/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='BOOTPROTO=' line='BOOTPROTO=none' state=present
+  - name: ethernet_bonding_ifcfg_eth1 7/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='MASTER=' line='MASTER=bond0' state=present
+  - name: ethernet_bonding_ifcfg_eth1 8/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-eth1 regexp='SLAVE=' line='SLAVE=yes' state=present
+#ifcfg_bound0
+  - name: ethernet_bonding_ifcfg_bond0 1/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-bond0 regexp='DEVICE=' line='DEVICE=bond0' state=present
+  - name: ethernet_bonding_ifcfg_bond0 2/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-bond0 regexp='BOOTPROTO=' line='BOOTPROTO=none' state=present
+  - name: ethernet_bonding_ifcfg_bond0 3/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-bond0 regexp='IPADDR=' line='IPADDR={{ ansible_default_ipv4.address }}' state=present   
+  - name: ethernet_bonding_ifcfg_bond0 4/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-bond0 regexp='NETMASK=' line='NETMASK={{ ansible_default_ipv4.netmask }}' state=present  
+  - name: ethernet_bonding_ifcfg_bond0 5/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-bond0 regexp='ONBOOT=' line='ONBOOT=yes' state=present
+  - name: ethernet_bonding_ifcfg_bond0 6/8
+    lineinfile: dest=/etc/sysconfig/network-scripts/ifcfg-bond0 regexp='BONDING_OPTS=' line='BONDING_OPTS="mode=1 miimon=1000"' state=present
+  - name: Restart Network
+    service: name=network state=restarted	

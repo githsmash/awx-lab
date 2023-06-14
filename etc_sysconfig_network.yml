@@ -1,0 +1,10 @@
+---
+- hosts: '{{ targetHosts }}'
+  remote_user: root
+  tasks:
+  - name: /etc/sysconfig/network 1/3
+    lineinfile: dest=/etc/sysconfig/network regexp='NETWORKING=' line='NETWORKING=yes' state=present 
+  - name: /etc/sysconfig/network 2/3
+    lineinfile: dest=/etc/sysconfig/network regexp='HOSTNAME=' line='HOSTNAME={{ inventory_hostname }}' state=present
+  - name: /etc/sysconfig/network 3/3
+    lineinfile: dest=/etc/sysconfig/network  regexp='GATEWAY=' line='GATEWAY={{ ansible_default_ipv4.gateway }}' state=present

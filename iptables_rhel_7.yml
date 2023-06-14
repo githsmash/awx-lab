@@ -1,0 +1,8 @@
+---
+- hosts: '{{ targetHosts }}'
+  remote_user: root
+  tasks:
+  - name: iptables off and disabled
+    service: name=iptables state=stopped enabled=no
+  - name: ip6tables off and disabled
+    service: name=ip6tables state=stopped enabled=no

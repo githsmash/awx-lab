@@ -1,0 +1,6 @@
+---
+- hosts: '{{ targetHosts }}'
+  remote_user: root
+  tasks:
+  - name: OverWrited /etc/resolv.conf
+    template: src=./files/etc_resolv.conf dest=/etc/resolv.conf
